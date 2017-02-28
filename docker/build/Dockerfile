@@ -12,4 +12,4 @@ VOLUME /home/.composer
 ENV COMPOSER_HOME=/home/.composer
 VOLUME /opt
 WORKDIR /opt
-ENTRYPOINT ["docker/unit_tests/run_tests.sh"]
+ENTRYPOINT ["docker/build/build.sh"]
