@@ -3,27 +3,38 @@
 # Exit this script upon the first failing command
 set -e
 
-# Run with local Docker Engine
-eval $(docker-machine env -u)
+if [ -z "$DOCKER_HUB_USERNAME" ]; then
+    echo "You need to set the DOCKER_HUB_USERNAME environment variable"
+    exit 1
+fi
 
-GIT_CLONE_URL="git@gitlab.com:matthiasnoback/continuous_delivery_mvp.git"
-BUILD_REFERENCE="$(git rev-parse --short --verify HEAD)"
+# Assumes Git >= 2.7
+GIT_CLONE_URL="$(git remote get-url origin)"
+COMMIT_HASH="$(git rev-parse --short --verify HEAD)"
+# We assume the previous working directory to be the project root directory
+PROJECT_DIR=$(pwd)
 
-export TEST_IMAGE_TAG="$DOCKER_HUB_USERNAME/service:$BUILD_REFERENCE"
+export TEST_IMAGE_TAG="$DOCKER_HUB_USERNAME/service:$COMMIT_HASH"
 RELEASE_IMAGE_TAG="$DOCKER_HUB_USERNAME/service:latest"
 
-BUILD_DIR="$(pwd)/build/$BUILD_REFERENCE"
-rm -rf "$BUILD_DIR" 2> /dev/null || true
-mkdir -p "$BUILD_DIR"
-git clone "$GIT_CLONE_URL" "$BUILD_DIR"
-cd "$BUILD_DIR"
+function fresh_checkout() {
+    cd "$PROJECT_DIR"
+    BUILD_DIR="$PROJECT_DIR/build/$COMMIT_HASH"
+    rm -rf "$BUILD_DIR" 2> /dev/null || true
+    mkdir -p "$BUILD_DIR"
+    git clone "$GIT_CLONE_URL" "$BUILD_DIR"
+    cd "$BUILD_DIR"
+    git checkout "$COMMIT_HASH"
+}
 
 #----------------------------------------------------
 # Build the test container and run the unit tests
 #----------------------------------------------------
+fresh_checkout
+
 docker build \
     -t "$DOCKER_HUB_USERNAME/unit_tests" \
-    -f "docker/unit_tests/Dockerfile" \
+    -f docker/unit_tests/Dockerfile \
     ./
 docker run \
     --rm \
@@ -35,6 +46,8 @@ docker run \
 #----------------------------------------------------
 # Build the build container and run the build
 #----------------------------------------------------
+fresh_checkout
+
 docker build \
     -t "$DOCKER_HUB_USERNAME/build" \
     -f "docker/build/Dockerfile" \
@@ -72,7 +85,7 @@ docker push "$RELEASE_IMAGE_TAG"
 # Deploy
 #----------------------------------------------------
 
-eval $(docker-machine env manager1)
+eval "$(docker-machine env manager1)"
 
 # Deploy to the Swarm
 docker stack deploy \
@@ -82,7 +95,7 @@ docker stack deploy \
 ###
 echo "Visit the newly deployed service at http://$(docker-machine ip manager1)/"
 echo "Press enter to start watching the deploy process"
-read
+read -r
 ###
 
 watch docker stack ps cd_demo
