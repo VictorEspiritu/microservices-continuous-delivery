@@ -1,0 +1,12 @@
+version: '3'
+
+services:
+    service:
+        image: $DOCKER_HUB_USERNAME/service:latest
+        ports:
+            - "80:80"
+        deploy:
+            replicas: 2
+            update_config:
+                parallelism: 1
+                delay: 5s
