@@ -102,7 +102,7 @@ docker stack deploy \
     --compose-file "$BUILD_DIR/docker-compose.deploy.yml" \
     cd_demo
 
-clean_up
+# clean_up
 
 ###
 echo "Visit the newly deployed service at http://$(docker-machine ip manager1)/"

@@ -2,8 +2,8 @@
 
 set -e
 
-if [ ! -t 0 ] ; then
-    echo "To run the service tests, run the `service_tests` container with a TTY"
+if [ ! -t 1 ] ; then
+    echo "To run the service tests, run this container with a terminal"
     exit 0
 fi
 
