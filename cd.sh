@@ -82,7 +82,7 @@ ${docker_compose_service_tests} up -d
 #----------------------------------------------------
 # Run service tests and stop all services
 #----------------------------------------------------
-${docker_compose_service_tests} run service_tests all
+${docker_compose_service_tests} run service_tests
 ${docker_compose_service_tests} down
 
 #----------------------------------------------------

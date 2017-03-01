@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 
-if [[ "$1" != "all" ]]; then
-    echo "To run the service tests, run the `service_tests` container with an extra argument: 'all'"
+tty -s;
+if [[ $? -ne 0 ]]; then
+    echo "To run the service tests, run the `service_tests` container with a TTY"
     exit 0
 fi
 
