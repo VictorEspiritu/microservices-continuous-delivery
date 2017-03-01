@@ -13,7 +13,6 @@ composer install \
     --no-interaction \
     --working-dir=$APP_DIRECTORY
 
-mkdir -p $BUILD_DIRECTORY/docker
-cp docker/service/Dockerfile $BUILD_DIRECTORY/docker
-BUILD_TAR=$BUILD_DIRECTORY/docker/build.tar.gz
+# Tar/zip all production files
+BUILD_TAR="$BUILD_DIRECTORY/docker/service/build.tar.gz"
 tar -czf $BUILD_TAR -C $APP_DIRECTORY .

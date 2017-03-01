@@ -5,9 +5,8 @@ set -e
 
 cd ./app
 
-# Install dev dependencies
-composer install \
-    --prefer-dist
+# Install development-specific dependencies
+composer install --prefer-dist
 
-# Run unit tests
+# Run the unit tests
 vendor/bin/phpunit
