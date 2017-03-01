@@ -1,9 +1,6 @@
 FROM alpine:3.5
-
-# Install ncat
 RUN apk add --no-cache curl bash
-
-VOLUME /opt
+RUN mkdir /opt
+COPY ./run_tests.sh /opt
 WORKDIR /opt
-
-ENTRYPOINT ["docker/service_tests/run_tests.sh"]
+ENTRYPOINT ["run_tests.sh"]

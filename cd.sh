@@ -31,7 +31,7 @@ function fresh_checkout() {
 
 function clean_up() {
     if [ ! -z "$BUILD_DIR" ]; then
-        rm -rf "$1" || true
+        rm -rf "$BUILD_DIR" || true
     fi
 }
 

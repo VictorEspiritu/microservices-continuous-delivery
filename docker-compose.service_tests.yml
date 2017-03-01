@@ -6,12 +6,11 @@ services:
 
     service_tests:
         image: $DOCKER_HUB_USERNAME/service_tests
-        build:
-            context: ./
-            dockerfile: docker/service_tests/Dockerfile
+        build: docker/service_tests/
         volumes:
             - ./:/opt
         depends_on:
             - service
 
-    # add other services that are needed to run the service tests
+    # optionally, add other services that are needed to
+    # run the service tests
