@@ -18,7 +18,7 @@ COMMIT_HASH="$(git rev-parse --short --verify HEAD)"
 PROJECT_DIR=$(pwd)
 
 export TEST_IMAGE_TAG="$DOCKER_HUB_USERNAME/service:$COMMIT_HASH"
-RELEASE_IMAGE_TAG="$DOCKER_HUB_USERNAME/service:latest"
+export RELEASE_IMAGE_TAG="$DOCKER_HUB_USERNAME/service:latest"
 
 function fresh_checkout() {
     cd "$PROJECT_DIR"

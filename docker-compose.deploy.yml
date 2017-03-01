@@ -2,7 +2,7 @@ version: '3'
 
 services:
     service:
-        image: $DOCKER_HUB_USERNAME/service:latest
+        image: ${RELEASE_IMAGE_TAG}
         ports:
             - "80:80"
         deploy:
