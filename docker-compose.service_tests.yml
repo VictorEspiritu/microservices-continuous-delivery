@@ -5,7 +5,7 @@ services:
         image: ${TEST_IMAGE_TAG}
 
     service_tests:
-        image: $DOCKER_HUB_USERNAME/service_tests
+        image: ${DOCKER_HUB_USERNAME}/service_tests
         build: docker/service_tests/
         depends_on:
             - service

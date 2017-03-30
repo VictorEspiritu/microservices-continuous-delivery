@@ -14,13 +14,13 @@
     # Let the Docker client talk to `worker1`
     eval $(docker-machine env worker1)
     docker swarm join \
-        --token $WORKER_JOIN_TOKEN \
+        --token "${WORKER_JOIN_TOKEN}" \
         --advertise-addr $(docker-machine ip worker1) \
         $(docker-machine ip manager1):2377
 
     # Let the Docker client talk to `worker2`
     eval $(docker-machine env worker2)
     docker swarm join \
-        --token $WORKER_JOIN_TOKEN \
+        --token "${WORKER_JOIN_TOKEN}" \
         --advertise-addr $(docker-machine ip worker2) \
         $(docker-machine ip manager1):2377

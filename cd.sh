@@ -3,7 +3,7 @@
 # Exit this script upon the first failing command
 set -e
 
-if [ -z "$DOCKER_HUB_USERNAME" ]; then
+if [ -z "${DOCKER_HUB_USERNAME}" ]; then
     echo "You need to set the DOCKER_HUB_USERNAME environment variable"
     exit 1
 fi
@@ -17,21 +17,21 @@ COMMIT_HASH="$(git rev-parse --short --verify HEAD)"
 # We assume the previous working directory to be the project root directory
 PROJECT_DIR=$(pwd)
 
-export TEST_IMAGE_TAG="$DOCKER_HUB_USERNAME/service:$COMMIT_HASH"
-export RELEASE_IMAGE_TAG="$DOCKER_HUB_USERNAME/service:latest"
+export TEST_IMAGE_TAG="${DOCKER_HUB_USERNAME}/service:${COMMIT_HASH}"
+export RELEASE_IMAGE_TAG="${DOCKER_HUB_USERNAME}/service:latest"
 
 function fresh_checkout() {
-    cd "$PROJECT_DIR"
-    mkdir -p "$PROJECT_DIR/build"
-    BUILD_DIR=$(mktemp -d "$PROJECT_DIR/build/$COMMIT_HASH-XXXXXXX")
-    git clone "$GIT_CLONE_URL" "$BUILD_DIR"
-    cd "$BUILD_DIR"
-    git checkout "$COMMIT_HASH"
+    cd "${PROJECT_DIR}"
+    mkdir -p "${PROJECT_DIR}/build"
+    BUILD_DIR=$(mktemp -d "${PROJECT_DIR}/build/${COMMIT_HASH}-XXXXXXX")
+    git clone "${GIT_CLONE_URL}" "${BUILD_DIR}"
+    cd "${BUILD_DIR}"
+    git checkout "${COMMIT_HASH}"
 }
 
 function clean_up() {
-    if [ ! -z "$BUILD_DIR" ]; then
-        rm -rf "$BUILD_DIR" || true
+    if [ ! -z "${BUILD_DIR}" ]; then
+        rm -rf "${BUILD_DIR}" || true
     fi
 }
 
@@ -41,15 +41,15 @@ function clean_up() {
 fresh_checkout
 
 docker build \
-    -t "$DOCKER_HUB_USERNAME/unit_tests" \
+    -t "${DOCKER_HUB_USERNAME}/unit_tests" \
     -f docker/unit_tests/Dockerfile \
-    "$BUILD_DIR"
+    "${BUILD_DIR}"
 docker run \
     --rm \
     -t \
-    -v "$BUILD_DIR:/opt" \
-    -v "$HOME/.composer:/home/.composer" \
-    "$DOCKER_HUB_USERNAME/unit_tests"
+    -v "${BUILD_DIR}:/opt" \
+    -v "${HOME}/.composer:/home/.composer" \
+    "${DOCKER_HUB_USERNAME}/unit_tests"
 
 clean_up
 
@@ -59,18 +59,18 @@ clean_up
 fresh_checkout
 
 docker build \
-    -t "$DOCKER_HUB_USERNAME/build" \
+    -t "${DOCKER_HUB_USERNAME}/build" \
     -f "docker/build/Dockerfile" \
-    "$BUILD_DIR"
+    "${BUILD_DIR}"
 docker run \
     --rm  \
     -t \
-    -v "$BUILD_DIR:/opt" \
-    -v "$HOME/.composer:/home/.composer" \
-    "$DOCKER_HUB_USERNAME/build"
+    -v "${BUILD_DIR}:/opt" \
+    -v "${HOME}/.composer:/home/.composer" \
+    "${DOCKER_HUB_USERNAME}/build"
 docker build \
-    -t "$TEST_IMAGE_TAG" \
-    "$BUILD_DIR/docker/service"
+    -t "${TEST_IMAGE_TAG}" \
+    "${BUILD_DIR}/docker/service"
 
 #----------------------------------------------------
 # Build the service_test containers and start them
@@ -88,8 +88,8 @@ ${docker_compose_service_tests} down
 #----------------------------------------------------
 # Release the new image of the service
 #----------------------------------------------------
-docker tag "$TEST_IMAGE_TAG" "$RELEASE_IMAGE_TAG"
-docker push "$RELEASE_IMAGE_TAG"
+docker tag "${TEST_IMAGE_TAG}" "${RELEASE_IMAGE_TAG}"
+docker push "${RELEASE_IMAGE_TAG}"
 
 #----------------------------------------------------
 # Deploy
@@ -99,7 +99,7 @@ eval "$(docker-machine env manager1)"
 
 # Deploy to the Swarm
 docker stack deploy \
-    --compose-file "$BUILD_DIR/docker-compose.deploy.yml" \
+    --compose-file "${BUILD_DIR}/docker-compose.deploy.yml" \
     cd_demo
 
 # clean_up
