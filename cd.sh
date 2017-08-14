@@ -45,6 +45,7 @@ docker build \
     -f docker/unit_tests/Dockerfile \
     "${BUILD_DIR}"
 docker run \
+    -u "${UID}" \
     --rm \
     -t \
     -v "${BUILD_DIR}:/opt" \
@@ -63,6 +64,7 @@ docker build \
     -f "docker/build/Dockerfile" \
     "${BUILD_DIR}"
 docker run \
+    -u "${UID}" \
     --rm  \
     -t \
     -v "${BUILD_DIR}:/opt" \
