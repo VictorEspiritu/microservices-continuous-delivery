@@ -1,3 +1,0 @@
-- Capture output of tar instead of reusing the build directory.
-- Create build directory for building the image.
-- Extract temp dir creation to separate function.
